@@ -26,7 +26,15 @@ const workoutSchema = new Schema({
   activities: [{ type: String, required: true }],
 }, { timestamps: true });
 
+const leaderboardSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  points: { type: Number, required: true, min: 0 },
+  activities: { type: Number, required: true, min: 0 },
+  rank: { type: Number, required: true, min: 1 },
+}, { timestamps: true });
+
 export const User = mongoose.model('User', userSchema);
 export const Team = mongoose.model('Team', teamSchema);
 export const Activity = mongoose.model('Activity', activitySchema);
 export const Workout = mongoose.model('Workout', workoutSchema);
+export const Leaderboard = mongoose.model('Leaderboard', leaderboardSchema);
