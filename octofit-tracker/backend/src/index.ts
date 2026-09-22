@@ -8,6 +8,10 @@ import { workoutRouter } from './routes/workouts.js';
 const app = express();
 const port = 8000;
 const mongoUri = process.env.MONGODB_URI ?? 'mongodb://127.0.0.1:27017/octofit_db';
+const codespaceName = process.env.CODESPACE_NAME;
+const baseUrl = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev`
+  : `http://localhost:${port}`;
 
 app.use(express.json());
 app.use('/api/users', userRouter);
@@ -23,11 +27,15 @@ app.get('/api/leaderboard', async (_request, response) => {
 });
 
 app.get('/api/health', (_request, response) => {
-  response.json({ status: 'ok', database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
+  response.json({
+    status: 'ok',
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    baseUrl,
+  });
 });
 
 app.listen(port, () => {
-  console.log(`OctoFit API listening on port ${port}`);
+  console.log(`OctoFit API listening at ${baseUrl}`);
 });
 
 mongoose.connect(mongoUri).catch((error: unknown) => {
